@@ -1,9 +1,10 @@
-from django.test import LiveServerTestCase
+#from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
         def setUp(self):
             self.browser = webdriver.Firefox()
@@ -44,6 +45,8 @@ class NewVisitorTest(LiveServerTestCase):
             #when she hits enter, the page updates, and now the page lists
             #"1: Buy peacock feathers" as an item in a to-do list
             inputbox.send_keys(Keys.ENTER)
+            self.browser.implicitly_wait(3)
+
             edith_list_url = self.browser.current_url
             self.assertRegex(edith_list_url,'/lists/.+')
             self.check_for_row_in_list_table('1: Buy peacock feathers')
@@ -96,13 +99,19 @@ class NewVisitorTest(LiveServerTestCase):
 
         def test_layout_and_styling(self):
             #Edith goes to the home page_text
+            print("self.browser.get")
             self.browser.get(self.live_server_url)
+            
+            print("self.browser.set_window_size")
             self.browser.set_window_size(1024,768)
 
             #she notices the input box is nicely centered
-
+            print("inputbox=")
             inputbox = self.browser.find_element_by_id('id_new_item')
+            print("assertAlmostEqual")
             self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
-            512,delta=5
+            512,delta=10
             )
+            #self.browser.implicitly_wait(3)
+
